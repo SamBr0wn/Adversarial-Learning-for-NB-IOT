@@ -1,15 +1,23 @@
 % Simulate function
 
-function x = simulate(SNRdB)
+function [simThroughput, bler] = simulate(SNRdB)
+    
+    run('variables.m');
+
     npdschInfo = hNPDSCHInfo;
     npdschInfo.NPDSCHDataType = NPDSCHDataType;
     npdschInfo.ISF = ISF;
     if strcmpi(NPDSCHDataType,'SIB1NB')  % NPDSCH carrying SIB1-NB
         npdschInfo.SchedulingInfoSIB1 = SchedulingInfoSIB1;
     else % NPDSCH not carrying SIB1-NB
-        npdschInfo.IRep = ireps(repIdx); % Repetition number field in DCI (DCI format N1 or N2)
+        npdschInfo.IRep = ireps; % Repetition number field in DCI (DCI format N1 or N2)
         npdschInfo.IMCS = IMCS;          % Modulation and coding scheme field in DCI (DCI format N1 or N2)
     end
+
+    npdsch.NSF = npdschInfo.NSF;
+    npdsch.NRep = npdschInfo.NRep;
+    npdsch.NPDSCHDataType = NPDSCHDataType;
+    npdsch.RNTI = 1;
 
     [~,info] = lteNPDSCHIndices(enb,npdsch);
     rmoutlen = info.G;           % Bit length after rate matching, i.e. codeword length
@@ -25,15 +33,14 @@ function x = simulate(SNRdB)
     NSubframe = enb.NFrame*10+enb.NSubframe;      
 
     % Initialize BLER and throughput result
-    maxThroughput = zeros(length(SNRdB),1);
-    simThroughput = zeros(length(SNRdB),1);
-    bler = zeros(1,numel(SNRdB));
+    maxThroughput = 0;
+    simThroughput = 0;
+    bler = 0;
 
     enb_init = enb;
     channel_init = channel;
 
     % TODO: check about the nested loop thing in the other example
-    rng(snrIdx,'combRecursive');
 
     fprintf('\nSimulating %d transport blocks at %gdB SNR\n',numTrBlks,SNRdB);
 
@@ -54,7 +61,7 @@ function x = simulate(SNRdB)
         % Set current subframe and frame numbers  
         enb.NSubframe = mod(subframeIdx,10);
         enb.NFrame = floor((subframeIdx)/10);
-            
+
         % Generate the NPSS symbols and indices
         npssSymbols = lteNPSS(enb);
         npssIndices = lteNPSSIndices(enb);
@@ -66,7 +73,7 @@ function x = simulate(SNRdB)
         nsssIndices = lteNSSSIndices(enb);
         % Map the symbols to the subframe grid
         subframeGrid(nsssIndices) = nsssSymbols;
-            
+
         % Establish if either NPSS or NSSS is transmitted and if so,
         % do not transmit NPDSCH in this subframe
         isDataSubframe = isempty(npssSymbols) && isempty(nsssSymbols);
@@ -113,7 +120,7 @@ function x = simulate(SNRdB)
 
 
         % Here is where the snr would get calculated
-        SNR = 10^(SNRdB(snrIdx)/10);
+        SNR = 10^(SNRdB/10);
 
         % Normalize noise power to take account of sampling rate, which
         % is a function of the IFFT size used in OFDM modulation, and
@@ -158,7 +165,7 @@ function x = simulate(SNRdB)
         % Perform OFDM demodulation on the received data to recreate the
         % resource grid
         rxSubframe = nbOFDMDemodulate(enb,rxWaveform);
-            
+
         % Channel estimation
         if(perfectChannelEstimator) 
             % Perfect channel estimation
@@ -198,17 +205,17 @@ function x = simulate(SNRdB)
         end
 
         subframeIdx = subframeIdx + 1;
-            
+
     end
 
     % Calculate the block error rate
-    bler(snrIdx) = numBlkErrors/numTrBlks;
-    fprintf('NPDSCH BLER = %.4f \n',bler(snrIdx));
+    bler = numBlkErrors/numTrBlks;
+    fprintf('NPDSCH BLER = %.4f \n',bler);
     % Calculate the maximum and simulated throughput
-    maxThroughput(snrIdx) = trblklen*numTrBlks; % Max possible throughput
-    simThroughput(snrIdx) = trblklen*(numTrBlks-numBlkErrors);  % Simulated throughput
-    fprintf('NPDSCH Throughput(%%) = %.4f %%\n',simThroughput(snrIdx)*100/maxThroughput(snrIdx));
+    maxThroughput = trblklen*numTrBlks; % Max possible throughput
+    simThroughput = trblklen*(numTrBlks-numBlkErrors);  % Simulated throughput
+    fprintf('NPDSCH Throughput(%%) = %.4f %%\n',simThroughput*100/maxThroughput);
 
 end
 
-% 
+

@@ -1,9 +1,11 @@
-numTrBlks = 4;        % Number of simulated transport blocks 
+numTrBlks = 16;        % Number of simulated transport blocks 
 NPDSCHDataType = 'NotBCCH'; 
 
 ISF = 0;                % Resource assignment field in DCI (DCI format N1 or N2)
 SchedulingInfoSIB1 = 0; % Scheduling information field in MasterInformationBlock-NB (MIB-NB)
 IMCS = 4;               % Modulation and coding scheme field in DCI (DCI format N1 or N2)
+
+ireps = 3;
 
 
 enb.NFrame = 0;     % Simulation starting frame number
