@@ -1,8 +1,16 @@
 % Simulate function
 
-function [simThroughput, bler] = simulate(SNRdB)
+%SNRdB is either good SNR value or bad based on what channel is getting
+%picked
+%jammer is 1 if jammer and victom select the same channel else jammer is 0
+function [simThroughput, bler] = simulate(SNRdB,jammer)
     
-    run('variables.m');
+    run('variables.m'); % this line should get moved to the main function
+
+    jammerEffect = 0;
+    if jammer == 1
+        jammerEffect = 0.2;
+    end
 
     npdschInfo = hNPDSCHInfo;
     npdschInfo.NPDSCHDataType = NPDSCHDataType;
@@ -132,7 +140,7 @@ function [simThroughput, bler] = simulate(SNRdB)
                                 randn(size(rxWaveform)));
 
         % Add AWGN to the received time domain waveform        
-        rxWaveform = rxWaveform + noise;
+        rxWaveform = rxWaveform + noise + jammerEffect;
 
         %------------------------------------------------------------------
         %            Receiver
