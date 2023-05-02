@@ -13,29 +13,29 @@ actInfo_v.Name = "TX Channel Action";
 env = rlFunctionEnv(obsInfo_v,actInfo_v,stepVictim,resetVictim);
 
 % create agent
-qTable = rlTable(obsInfo_v, actInfo_v);
-qFunction = rlQValueFunction(qTable, obsInfo_v, actInfo_v);
-qOptions = rlOptimizerOptions(LearnRate=1);
+qTable_v = rlTable(obsInfo_v, actInfo_v);
+qFunction_v = rlQValueFunction(qTable_v, obsInfo_v, actInfo_v);
+qOptions_v = rlOptimizerOptions(LearnRate=1);
 
-agentOpts = rlQAgentOptions;
-agentOpts.DiscountFactor = 1;
-agentOpts.EpsilonGreedyExploration.Epsilon = 0.9;
-agentOpts.EpsilonGreedyExploration.EpsilonDecay = 0.01;
-agentOpts.CriticOptimizerOptions = qOptions;
-qAgent = rlQAgent(qFunction,agentOpts); 
+agentOpts_v = rlQAgentOptions;
+agentOpts_v.DiscountFactor = 1;
+agentOpts_v.EpsilonGreedyExploration.Epsilon = 0.9;
+agentOpts_v.EpsilonGreedyExploration.EpsilonDecay = 0.01;
+agentOpts_v.CriticOptimizerOptions = qOptions_v;
+qAgent_v = rlQAgent(qFunction_v,agentOpts_v); 
 
-trainOpts = rlTrainingOptions;
-trainOpts.MaxStepsPerEpisode = 50;
-trainOpts.MaxEpisodes = 500;
-trainOpts.StopTrainingCriteria = "AverageReward";
-trainOpts.StopTrainingValue = 2; %
-trainOpts.ScoreAveragingWindowLength = 30;
+trainOpts_v = rlTrainingOptions;
+trainOpts_v.MaxStepsPerEpisode = 50;
+trainOpts_v.MaxEpisodes = 500;
+trainOpts_v.StopTrainingCriteria = "AverageReward";
+trainOpts_v.StopTrainingValue = 2; %
+trainOpts_v.ScoreAveragingWindowLength = 30;
 
-doTraining = false;
+doTraining = true;
 
 if doTraining
     % Train the agent.
-    trainingStats = train(qAgent,env,trainOpts); %#ok<UNRCH> 
+    trainingStats = train(qAgent_v,env,trainOpts_v); %#ok<UNRCH> 
 else
     % Load pretrained agent for the example.
     load("genericMDPQAgent.mat","qAgent"); 
