@@ -3,7 +3,7 @@
 %SNRdB is either good SNR value or bad based on what channel is getting
 %picked
 %jammer is 1 if jammer and victom select the same channel else jammer is 0
-function [simThroughput, bler] = simulate(SNRdB,jammer)
+function [simThroughput, bler] = simulate(SNRdB, jammer)
     
     run('variables.m'); % this line should get moved to the main function
 
