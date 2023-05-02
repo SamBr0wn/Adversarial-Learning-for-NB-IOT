@@ -1,6 +1,7 @@
 
 % Begining of the simulation - victom pre training
 run('variables.m'); % this line should get moved to the main function
+save("savedVars");
 
 obsInfo_v = rlNumericSpec([3 1]);
 obsInfo_v.Name = "Victom Channel Select";
@@ -9,8 +10,11 @@ obsInfo_v.Description = 'TX Channel Selected, BLER, Throughput';
 actInfo_v = rlNumericSpec([1 1]);
 actInfo_v.Name = "TX Channel Action";
 
+type resetVictim.m
+type stepVictim.m
+
 % create environment
-env = rlFunctionEnv(obsInfo_v,actInfo_v,stepVictim,resetVictim);
+env = rlFunctionEnv(obsInfo_v, actInfo_v, "stepVictim", "resetVictim");
 
 % create agent
 qTable_v = rlTable(obsInfo_v, actInfo_v);

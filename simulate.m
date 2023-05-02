@@ -5,7 +5,6 @@
 %jammer is 1 if jammer and victom select the same channel else jammer is 0
 function [simThroughput, bler] = simulate(SNRdB, jammer)
     
-   
 
     jammerEffect = 0;
     if jammer == 1
