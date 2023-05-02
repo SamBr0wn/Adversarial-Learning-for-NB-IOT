@@ -7,6 +7,8 @@ IMCS = 4;               % Modulation and coding scheme field in DCI (DCI format 
 
 ireps = 3;
 
+t = 3; % memory
+
 nChannels = 12;
 
 goodSNRdB = -3;

@@ -2,7 +2,7 @@
 % Begining of the simulation - victom pre training
 run('variables.m'); % this line should get moved to the main function
 
-obsInfo_j = rlNumericSpec([3 1]);
+obsInfo_j = rlNumericSpec([3 t]);
 obsInfo_j.Name = "Jammer Channel Select";
 obsInfo_j.Description = 'TX Channel Selected, BLER, Throughput';
 

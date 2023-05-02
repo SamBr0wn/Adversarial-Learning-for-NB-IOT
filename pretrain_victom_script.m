@@ -2,7 +2,7 @@
 % Begining of the simulation - victom pre training
 run('variables.m'); % this line should get moved to the main function
 
-obsInfo_v = rlNumericSpec([3 1]);
+obsInfo_v = rlNumericSpec([3 t]);
 obsInfo_v.Name = "Victom Channel Select";
 obsInfo_v.Description = 'TX Channel Selected, BLER, Throughput';
 
