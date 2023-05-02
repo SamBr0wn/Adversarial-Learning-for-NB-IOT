@@ -6,15 +6,19 @@ function [NextObs,Reward,IsDone,LoggedSignals] = stepVictim(Action, LoggedSignal
 
 new_channel_state = evolveChannel(LoggedSignals.channel_state);
 
-channel_state = evolveChannel(LoggedSignals.channel_state);
+if new_channel_state(Action) == 1
+    cs_SNR = goodSNRdB;
+else
+    cs_SNR = badSNRdB;
+end
 
-if new_channel_state(Action)
-cs_SNR = 
+[simThroughput, bler] = simulate(cs_SNR, 0);
 
-simulate()
+Obs = [Action, simThroughput, bler];
+NextObs = [Obs; LoggedSignal.victim_obs(1:(end-1))];
 
+Reward = simThroughput;
 
-
-
+IsDone = false;
 
 end
