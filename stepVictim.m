@@ -6,6 +6,8 @@ function [NextObs,Reward,IsDone,LoggedSignals] = stepVictim(Action, LoggedSignal
 
 new_channel_state = evolveChannel(LoggedSignals.channel_state);
 
+channel_state = evolveChannel(LoggedSignals.channel_state);
+
 if new_channel_state(Action)
 cs_SNR = 
 
