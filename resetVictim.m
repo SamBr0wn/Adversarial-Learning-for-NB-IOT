@@ -14,8 +14,8 @@ LoggedSignal.cs = victim_cs;
 LoggedSignal.channel_state = channel_state;
 
 InitialObservation = zeros(mem_length, 3);
-InitialObservation(1) = [victim_cs 0 0];
+InitialObservation(1, :) = [victim_cs 0 0];
 
-LoggedSignal.victim_obs = InitialObservation;a
+LoggedSignal.victim_obs = InitialObservation;
 
 end
