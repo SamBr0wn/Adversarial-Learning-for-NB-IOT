@@ -4,7 +4,7 @@ function [NextObs,Reward,IsDone,LoggedSignals] = stepVictim(Action, LoggedSignal
 % throughput achieved), the reward (based on throughput), and the "IsDone"
 % flag are returned.
 
-channel_state = evolveChannel(LoggedSignals.channel_state);
+% channel_state = evolveChannel(LoggedSignals.channel_state);
 
 
 

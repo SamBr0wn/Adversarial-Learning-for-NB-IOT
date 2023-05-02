@@ -7,6 +7,10 @@ IMCS = 4;               % Modulation and coding scheme field in DCI (DCI format 
 
 ireps = 3;
 
+nChannels = 12;
+
+goodSNRdB = -3;
+badSNRdb = -10;
 
 enb.NFrame = 0;     % Simulation starting frame number
 enb.NSubframe = 0;  % Simulation starting subframe number
