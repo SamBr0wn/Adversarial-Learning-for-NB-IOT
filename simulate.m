@@ -5,6 +5,9 @@
 %jammer is 1 if jammer and victom select the same channel else jammer is 0
 function [simThroughput, bler] = simulate(SNRdB, jammer)
     
+    if ~exist('Parameters','var')
+        Parameters = load("Parameters.mat");
+    end
 
     jammerEffect = 0;
     if jammer == 1
@@ -12,19 +15,22 @@ function [simThroughput, bler] = simulate(SNRdB, jammer)
     end
 
     npdschInfo = hNPDSCHInfo;
-    npdschInfo.NPDSCHDataType = NPDSCHDataType;
-    npdschInfo.ISF = ISF;
-    if strcmpi(NPDSCHDataType,'SIB1NB')  % NPDSCH carrying SIB1-NB
-        npdschInfo.SchedulingInfoSIB1 = SchedulingInfoSIB1;
+    npdschInfo.NPDSCHDataType = Parameters.NPDSCHDataType;
+    npdschInfo.ISF = Parameters.ISF;
+    if strcmpi(Parameters.NPDSCHDataType,'SIB1NB')  % NPDSCH carrying SIB1-NB
+        npdschInfo.SchedulingInfoSIB1 = Parameters.SchedulingInfoSIB1;
     else % NPDSCH not carrying SIB1-NB
-        npdschInfo.IRep = ireps; % Repetition number field in DCI (DCI format N1 or N2)
-        npdschInfo.IMCS = IMCS;          % Modulation and coding scheme field in DCI (DCI format N1 or N2)
+        npdschInfo.IRep = Parameters.ireps; % Repetition number field in DCI (DCI format N1 or N2)
+        npdschInfo.IMCS = Parameters.IMCS;          % Modulation and coding scheme field in DCI (DCI format N1 or N2)
     end
 
     npdsch.NSF = npdschInfo.NSF;
     npdsch.NRep = npdschInfo.NRep;
-    npdsch.NPDSCHDataType = NPDSCHDataType;
+    npdsch.Parameters.NPDSCHDataType = Parameters.NPDSCHDataType;
     npdsch.RNTI = 1;
+
+    enb = Parameters.enb;
+    channel = Parameters.channel;
 
     [~,info] = lteNPDSCHIndices(enb,npdsch);
     rmoutlen = info.G;           % Bit length after rate matching, i.e. codeword length
@@ -46,6 +52,10 @@ function [simThroughput, bler] = simulate(SNRdB, jammer)
 
     enb_init = enb;
     channel_init = channel;
+    cec = Parameters.cec;
+    ireps = Parameters.ireps;
+    numTrBlks = Parameters.numTrBlks;
+    perfectChannelEstimator = Parameters.perfectChannelEstimator;
 
     % TODO: check about the nested loop thing in the other example
 

@@ -13,8 +13,7 @@ victim_cs = randi([0, nChannels]);
 LoggedSignal.cs = victim_cs;
 LoggedSignal.channel_state = channel_state;
 
-InitialObservation = zeros(mem_length, 3);
-InitialObservation(1, :) = [victim_cs 0 0];
+InitialObservation = zeros(mem_length, 1);
 
 LoggedSignal.victim_obs = InitialObservation;
 

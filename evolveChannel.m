@@ -30,7 +30,7 @@ function current_state = evolveChannel(last_state)
     p = 0.7; % probability that the channel will change
     nChannels = 12;
     event = randi(100)/100;
-    current_state = [0 0];
+    current_state = zeros(1:nChannels);
 
     if (event <= p)
         if (last_state(2) == nChannels )
