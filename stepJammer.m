@@ -8,14 +8,14 @@ Parameters = load("Parameters.mat");
 
 new_channel_state = evolveChannel(LoggedSignals.channel_state);
 LoggedSignals.channel_state = new_channel_state;
-load("PPO_victim_agent.mat");
+
+if ~isfield(LoggedSignals, "PPO_victim_agent")
+    load("PPO_victim_agent.mat");
+    LoggedSignals.PPO_victim_agent = PPO_victim_agent;
+end
 
 
-
-
-
-
-victim_action = getAction(PPO_victim_agent, LoggedSignals.victim_obs);
+victim_action = getAction(LoggedSignals.PPO_victim_agent, LoggedSignals.victim_obs);
 
 
 %why can't victom select 0 / no transmit
