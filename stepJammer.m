@@ -32,10 +32,6 @@ LoggedSignals.cs_v = mod(LoggedSignals.cs_v + victim_action{1} - 1, Parameters.n
 % % [simThroughput, bler] = simulate(cs_SNR, 0);
 % simThroughput = cs_SNR + 10;
 
-if ~exist("LoggedSignals.jammer_obs", "var")
-    LoggedSignals.jammer_obs = zeros(Parameters.mem_length, 1);
-end
-
 
 
 % % NextObs = [cs_SNR; LoggedSignals.victim_obs(1:(Parameters.mem_length-1))];

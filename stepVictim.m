@@ -33,9 +33,6 @@ end
 % [simThroughput, bler] = simulate(cs_SNR, 0);
 % simThroughput = cs_SNR + 10;
 
-if ~exist("LoggedSignal.victim_obs", "var")
-    LoggedSignal.victim_obs = zeros(Parameters.mem_length, 1);
-end
 
 % NextObs = [cs_SNR; LoggedSignals.victim_obs(1:(Parameters.mem_length-1))];
 % if cs_SNR > Parameters.badSNRdB

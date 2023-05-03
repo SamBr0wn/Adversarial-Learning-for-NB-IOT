@@ -27,7 +27,7 @@
 % rest will be bad. 
 % Return int 1-12 to represent the good channel
 function current_state = evolveChannel(last_state)
-    p = 0.2; % probability that the channel will change
+    p = 0.5; % probability that the channel will change
     nChannels = 12;
     event = randi(100)/100;
     current_state = zeros(2, 1);

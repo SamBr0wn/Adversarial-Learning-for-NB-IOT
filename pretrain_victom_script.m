@@ -1,4 +1,4 @@
-clear;
+    clear;
 
 % ----------Begining of the simulation - victom pre training---------
 run('variables.m'); % this line should get moved to the main function
