@@ -20,14 +20,16 @@ type stepVictim.m;
 env = rlFunctionEnv(obsInfo_v, actInfo_v, "stepVictim", "resetVictim");
 
 PPO_opt = rlPPOAgentOptions;
-PPO_agent = rlPPOAgent(obsInfo_v,actInfo_v,PPO_opt);
+PPO_victim_agent = rlPPOAgent(obsInfo_v,actInfo_v,PPO_opt);
 
 opt = rlTrainingOptions(...
-    MaxEpisodes=1000,...
+    MaxEpisodes=100,...
     MaxStepsPerEpisode=200,...
     StopTrainingCriteria="AverageReward",...
-    StopTrainingValue=1000);
-trainResults = train(PPO_agent,env,opt);
+    StopTrainingValue=500);
+trainResults = train(PPO_victim_agent,env,opt);
 
-trainResults = train(PPO_agent, env, trainResults);
+trainResults = train(PPO_victim_agent, env, trainResults);
+
+save("PPO_victim_agent", "PPO_victim_agent");
 
