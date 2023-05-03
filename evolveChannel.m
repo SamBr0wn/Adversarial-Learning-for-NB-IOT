@@ -27,19 +27,21 @@
 % rest will be bad. 
 % Return int 1-12 to represent the good channel
 function current_state = evolveChannel(last_state)
-    p = 0.7; % probability that the channel will change
+    p = 0.5; % probability that the channel will change
     nChannels = 12;
     event = randi(100)/100;
-    current_state = zeros(1:nChannels);
+    current_state = zeros(2, 1);
 
     if (event <= p)
-        if (last_state(2) == nChannels )
-            current_state(1) = 1;
-            current_state(2) = 2;
-        else
-            current_state(1) = last_state(1) + 1;
-            current_state(2) = last_state(2) + 1;
-        end
+%         if (last_state(2) == nChannels )
+%             current_state(1) = 1;
+%             current_state(2) = 2;
+%         else
+%             current_state(1) = last_state(1) + 1;
+%             current_state(2) = last_state(2) + 1;
+%         end
+        current_state(1) = mod(last_state(1), nChannels) + 1;
+        current_state(2) = mod(last_state(2), nChannels) + 1;
     else
         current_state(1) = last_state(1);
         current_state(2) = last_state(2);

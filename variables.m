@@ -12,7 +12,7 @@ ireps = 3;
 nChannels = 12;
 
 goodSNRdB = -3;
-badSNRdB = -10;
+badSNRdB = -20;
 
 mem_length = 10;
 

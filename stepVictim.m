@@ -4,26 +4,48 @@ function [NextObs,Reward,IsDone,LoggedSignals] = stepVictim(Action, LoggedSignal
 % throughput achieved), the reward (based on throughput), and the "IsDone"
 % flag are returned.
 
-load("savedVars.mat");
+Parameters = load("Parameters.mat");
 
 new_channel_state = evolveChannel(LoggedSignals.channel_state);
+LoggedSignals.channel_state = new_channel_state;
 
-if any(new_channel_state == mod(floor(Action), nChannels))
-    cs_SNR = goodSNRdB;
+% if Action == 1
+%     LoggedSignals.cs = mod(LoggedSignals.cs + 1, Parameters.nChannels + 1);
+% elseif Action == -1
+%     LoggedSignals.cs = mod(LoggedSignals.cs - 1, Parameters.nChannels + 1);
+% end
+
+LoggedSignals.cs = mod(LoggedSignals.cs + Action - 1, Parameters.nChannels) + 1;
+
+if any(new_channel_state == LoggedSignals.cs)
+    cs_SNR = Parameters.goodSNRdB;
 else
-    cs_SNR = badSNRdB;
+    cs_SNR = Parameters.badSNRdB;
 end
 
-[simThroughput, bler] = simulate(cs_SNR, 0);
+% [simThroughput, bler] = simulate(cs_SNR, 0);
+simThroughput = cs_SNR + 10;
 
 if ~exist("LoggedSignal.victim_obs", "var")
-    LoggedSignal.victim_obs = zeros(mem_length, 1);
+    LoggedSignal.victim_obs = zeros(Parameters.mem_length, 1);
 end
 
-NextObs = [cs_SNR; LoggedSignal.victim_obs(1:(mem_length-1))];
+% NextObs = [cs_SNR; LoggedSignals.victim_obs(1:(Parameters.mem_length-1))];
+if cs_SNR > Parameters.badSNRdB
+    NextObs = 1;
+else
+    NextObs = 0;
+end
+LoggedSignals.victim_obs = NextObs;
 
 Reward = simThroughput;
 
 IsDone = false;
+
+fprintf("Step: %d; Channel: %s; CS: %d; Action: %d; Next Obs: %s; Reward: %f\n", ...
+   LoggedSignals.stepNum, arrToStr(new_channel_state), LoggedSignals.cs, Action, ...
+   arrToStr(NextObs), Reward);
+
+LoggedSignals.stepNum = LoggedSignals.stepNum + 1;
 
 end
