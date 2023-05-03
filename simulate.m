@@ -3,7 +3,7 @@
 %SNRdB is either good SNR value or bad based on what channel is getting
 %picked
 %jammer is 1 if jammer and victom select the same channel else jammer is 0
-function [simThroughput, bler] = simulate(SNRdB, jammer)
+function [throughput, bler] = simulate(SNRdB, jammer)
     
     if ~exist('Parameters','var')
         Parameters = load("Parameters.mat");
@@ -232,6 +232,7 @@ function [simThroughput, bler] = simulate(SNRdB, jammer)
     maxThroughput = trblklen*numTrBlks; % Max possible throughput
     simThroughput = trblklen*(numTrBlks-numBlkErrors);  % Simulated throughput
     fprintf('NPDSCH Throughput(%%) = %.4f %%\n',simThroughput*100/maxThroughput);
+    throughput = simThroughput/maxThroughput;
 
 end
 

@@ -33,7 +33,6 @@ LoggedSignals.cs_v = mod(LoggedSignals.cs_v + victim_action{1} - 1, Parameters.n
 % simThroughput = cs_SNR + 10;
 
 
-
 % % NextObs = [cs_SNR; LoggedSignals.victim_obs(1:(Parameters.mem_length-1))];
 % if cs_SNR > Parameters.badSNRdB
 %     NextObs = 1;
@@ -54,13 +53,19 @@ LoggedSignals.jammer_obs = j_selected_v;
 
 LoggedSignals.victim_obs = v_selected_gc;
 
-Reward = 2*j_selected_v - 1;
+Reward = -1;
+if (j_selected_v)
+    Reward = 1;
+elseif (abs(LoggedSignals.cs_j - LoggedSignals.cs_v) < 2 )
+    Reward = -0.5;
+end
+    
 NextObs = j_selected_v;
 
 IsDone = false;
 
-fprintf("Step: %d; Channel: %s; CS: %d; Action: %d; Next Obs: %s; Reward: %f\n", ...
-   LoggedSignals.stepNum, arrToStr(new_channel_state), LoggedSignals.cs_j, Action, ...
+fprintf("Step: %d; Channel: %s; JCS: %d; VCS: %d Last Action: %d; Cur Obs: %s; Reward: %f\n", ...
+   LoggedSignals.stepNum, arrToStr(new_channel_state), LoggedSignals.cs_j, LoggedSignals.cs_v, Action, ...
    arrToStr(j_selected_v), Reward);
 
 LoggedSignals.stepNum = LoggedSignals.stepNum + 1;
