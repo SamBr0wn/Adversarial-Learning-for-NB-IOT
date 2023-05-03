@@ -2,41 +2,61 @@
 % Begining of the simulation - victom pre training
 run('variables.m'); % this line should get moved to the main function
 
-obsInfo_j = rlNumericSpec([3 t]);
-obsInfo_j.Name = "Jammer Channel Select";
-obsInfo_j.Description = 'TX Channel Selected, BLER, Throughput';
+load("PPO_victim_agent.mat");
+load("PPO_jammer_agent.mat");
 
-actInfo_j = rlNumericpec([1 1]);
-actInfo_j.Name = "TX Channel Action";
 
-% create environment
-env = rlFunctionEnv(obsInfo_j,actInfo_j,stepJammer,resetJammer);
+Parameters = load("Parameters.mat");
 
-% create agent
-qTable_j = rlTable(obsInfo_j, actInfo_j);
-qFunction_j = rlQValueFunction(qTable_j, obsInfo_j, actInfo_j);
-qOptions_j = rlOptimizerOptions(LearnRate=1);
 
-agentOpts_j = rlQAgentOptions;
-agentOpts_j.DiscountFactor = 1;
-agentOpts_j.EpsilonGreedyExploration.Epsilon = 0.9;
-agentOpts_j.EpsilonGreedyExploration.EpsilonDecay = 0.01;
-agentOpts_j.CriticOptimizerOptions = qOptions_j;
-qAgent_j = rlQAgent(qFunction_j,agentOpts_j); 
+numTrials = 10;
+x = 1:numTrials;
 
-trainOpts_j = rlTrainingOptions;
-trainOpts_j.MaxStepsPerEpisode = 50;
-trainOpts_j.MaxEpisodes = 500;
-trainOpts_j.StopTrainingCriteria = "AverageReward";
-trainOpts_j.StopTrainingValue = 2; %
-trainOpts_j.ScoreAveragingWindowLength = 30;
+BLER_results = zeros(1,numTrials);
+Throughput_results = zeros(1,numTrials);
 
-doTraining = true;
+% Choose intial channel state
+% Randomly choose initial channel selection with 0 being no-transmission
+channel1 = randi([1 (Parameters.nChannels - 1)]);
+channel_state = [channel1 mod(channel1 + 1, Parameters.nChannels + 1)];
+jammer_cs = randi([1, Parameters.nChannels]);
+victim_cs = randi([0, Parameters.nChannels]);
 
-if doTraining
-    % Train the agent.
-    trainingStats = train(qAgent_j,env,trainOpts_j); %#ok<UNRCH> 
-else
-    % Load pretrained agent for the example.
-    load("genericMDPQAgent.mat","qAgent"); 
+Obs_j = 0;
+if jammer_cs == victim_cs
+    Obs_j = 1;
 end
+Obs_v = 0;
+SNRdB = badSNRdB;
+if any(channel_state == victim_cs)
+    Obs_v = 1;
+    SNRdB = goodSNRdB;
+end
+
+
+for i= 1:numTrials
+    [Throughput_result,BLER_result] = simulate(SNRdB,Obs_j);
+    BLER_results(i) = BLER_result;
+    Throughput_results(i) = Throughput_result;
+
+    victim_action = getAction(PPO_victim_agent, Obs_v);
+    jammer_action = getAction(PPO_jammer_agent, Obs_j);
+
+
+    channel_state = evolveChannel(channel_state);
+    jammer_cs = mod(jammer_cs + jammer_action{1} - 1, Parameters.nChannels) + 1;
+    victim_cs = mod(victim_cs + victim_action{1} - 1, Parameters.nChannels) + 1;
+
+    Obs_j = 0;
+    if jammer_cs == victim_cs
+        Obs_j = 1;
+    end
+    Obs_v = 0;
+    SNRdB = badSNRdB;
+    if any(channel_state == victim_cs)
+        Obs_v = 1;
+        SNRdB = goodSNRdB;
+    end   
+end
+
+plot(x,BLER_results,x,)
