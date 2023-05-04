@@ -8,12 +8,18 @@ load("PPO_jammer_agent.mat");
 
 Parameters = load("Parameters.mat");
 
+doSim = false;
 
-numTrials = 10;
+numTrials = 60;
 x = 1:numTrials;
 
 BLER_results = zeros(1,numTrials);
 Throughput_results = zeros(1,numTrials);
+
+num_trials_to_plot = 60;
+cs_matrix = zeros(nChannels, num_trials_to_plot);
+victim_cs_matrix = zeros(nChannels, num_trials_to_plot);
+jammer_cs_matrix = zeros(nChannels, num_trials_to_plot);
 
 % Choose intial channel state
 % Randomly choose initial channel selection with 0 being no-transmission
@@ -38,17 +44,27 @@ end
 
 
 for i= 1:numTrials
-    [Throughput_result,BLER_result] = simulate(SNRdB,Obs_j);
-    BLER_results(i) = BLER_result;
-    Throughput_results(i) = Throughput_result;
+    disp("Running trial " + i + "...");
+
+    if doSim
+        [Throughput_result,BLER_result] = simulate(SNRdB,Obs_j);
+        BLER_results(i) = BLER_result;
+        Throughput_results(i) = Throughput_result;
+    end
 
     victim_action = getAction(PPO_victim_agent, Obs_v);
     jammer_action = getAction(PPO_jammer_agent, Obs_j);
 
 
     channel_state = evolveChannel(channel_state, Parameters.channel_evolve_prob);
+
+    cs_matrix(channel_state, i) = 1;
+
     jammer_cs = mod(jammer_cs + jammer_action{1} - 1, Parameters.nChannels) + 1;
     victim_cs = mod(victim_cs + victim_action{1} - 1, Parameters.nChannels) + 1;
+
+    victim_cs_matrix(victim_cs, i) = 1;
+    jammer_cs_matrix(jammer_cs, i) = 1;
 
     Obs_j = [0 0];
     if jammer_cs == victim_cs
@@ -64,5 +80,25 @@ for i= 1:numTrials
         SNRdB = goodSNRdB;
     end   
 end
+
+[victim_cs_ind_y, victim_cs_ind_x] = find(victim_cs_matrix == 1);
+[jammer_cs_ind_y, jammer_cs_ind_x] = find(jammer_cs_matrix == 1);
+
+victim_cs_ind_y = victim_cs_ind_y + 0.5;
+victim_cs_ind_x = victim_cs_ind_x + 0.5;
+jammer_cs_ind_y = jammer_cs_ind_y + 0.5;
+jammer_cs_ind_x = jammer_cs_ind_x + 0.5;
+
+figure;
+pcolor(cs_matrix);
+cmap = colormap('gray');
+grid();
+hold on;
+scatter(victim_cs_ind_x, victim_cs_ind_y, 250, 'go', 'filled');
+scatter(jammer_cs_ind_x, jammer_cs_ind_y, 250, 'rx', 'LineWidth', 2);
+xlabel("Time Step");
+ylabel("Channel #");
+title("RL Simulation Results");
+legend(["Channel Quality", "Victim CS", "Jammer CS"]);
 
 % plot(x,BLER_results,x,)
