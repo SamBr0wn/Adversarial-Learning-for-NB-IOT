@@ -7,9 +7,9 @@ Parameters = load("Parameters.mat");
 
 doSim = true;
 
-numTrials = 5;
+numTrials = 50;
 x = 1:numTrials;
-run_with_jammer = 0; % 1 for running with the jammer
+run_with_jammer = 1; % 1 for running with the jammer
 run_with_fortified_victim = false;
 
 load("PPO_jammer_agent.mat");
@@ -154,11 +154,32 @@ legend(["Channel Quality", "Victim CS", "Jammer CS"], 'FontSize', 12);
 set(gca,'fontsize', 14);
 
 if doSim
+
+    good_or_bad_channel = zeros(1, numTrials);
+    for i = 1:numTrials
+        if cs_matrix(victim_cs_vals(i), i) == 1
+            good_or_bad_channel(i) == 1;
+        end
+    end
+
+    SNR_vals = good_or_bad_channel * (Parameters.goodSNRdB - Parameters.badSNRdB) + ...
+        Parameters.badSNRdB;
     
     figure;
-    plot(Throughput_results, 'b-');
+    yyaxis left;
+    plot(Throughput_results, 'b-o', 'MarkerSize', 10, 'LineWidth', 2);
+    ylabel("Throughput (% Maximum)");
     hold on;
-    plot(victim_cs_vals == jammer_cs_vals);
+    scatter(find(victim_cs_vals == jammer_cs_vals), ...
+        Throughput_results(find(victim_cs_vals == jammer_cs_vals)), 250, 'rx', 'LineWidth', 2);
+    yyaxis right;
+    plot(SNR_vals, '--', 'LineWidth', 2);
+    grid();
+    xlabel("Time Step", 'FontSize', 12);
+    ylabel("SNR (dB)", 'FontSize', 12);
+    legend(["Thrpt", "Victim Jammed", "SNR (dB)"], 'FontSize', 12);
+    set(gca,'fontsize', 12);
+    title("Communications Link Performance");
 
 end
 
