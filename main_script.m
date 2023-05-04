@@ -10,7 +10,7 @@ doSim = true;
 numTrials = 50;
 x = 1:numTrials;
 run_with_jammer = 1; % 1 for running with the jammer
-run_with_fortified_victim = false;
+run_with_fortified_victim = true;
 
 load("PPO_jammer_agent.mat");
 if run_with_fortified_victim
@@ -87,6 +87,9 @@ for i= 1:numTrials
     else
         jammer_action = {0};
     end
+
+    jammer_cs_vals(i) = jammer_cs;
+    victim_cs_vals(i) = victim_cs;
     
     channel_state = evolveChannel(channel_state, Parameters.channel_evolve_prob);
 
@@ -95,8 +98,6 @@ for i= 1:numTrials
     jammer_cs = mod(jammer_cs + jammer_action{1} - 1, Parameters.nChannels) + 1;
     victim_cs = mod(victim_cs + victim_action{1} - 1, Parameters.nChannels) + 1;
 
-    jammer_cs_vals(i) = jammer_cs;
-    victim_cs_vals(i) = victim_cs;
 
     victim_cs_matrix(victim_cs, i) = 1;
     if run_with_jammer
