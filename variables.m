@@ -7,12 +7,12 @@ ISF = 0;                % Resource assignment field in DCI (DCI format N1 or N2)
 SchedulingInfoSIB1 = 0; % Scheduling information field in MasterInformationBlock-NB (MIB-NB)
 IMCS = 4;               % Modulation and coding scheme field in DCI (DCI format N1 or N2)
 
-ireps = 3;
+ireps = 4;
 
 nChannels = 12;
 
 goodSNRdB = -3;
-badSNRdB = -20;
+badSNRdB = -15;
 
 mem_length = 10;
 

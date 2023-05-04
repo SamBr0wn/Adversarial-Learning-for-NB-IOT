@@ -11,7 +11,7 @@ function [throughput, bler] = simulate(SNRdB, jammer)
 
     jammerEffect = 0;
     if jammer == 1
-        jammerEffect = 0.2;
+        jammerEffect = 0.1;
     end
 
     npdschInfo = hNPDSCHInfo;
@@ -58,6 +58,8 @@ function [throughput, bler] = simulate(SNRdB, jammer)
     perfectChannelEstimator = Parameters.perfectChannelEstimator;
 
     % TODO: check about the nested loop thing in the other example
+
+    snr_offset = 2*randn(1);
 
     fprintf('\nSimulating %d transport blocks at %gdB SNR\n',numTrBlks,SNRdB);
 
@@ -137,7 +139,8 @@ function [throughput, bler] = simulate(SNRdB, jammer)
 
 
         % Here is where the snr would get calculated
-        SNR = 10^(SNRdB/10);
+        SNR = 10^((SNRdB+snr_offset)/10);
+        snr_offset = 2*randn(1);
 
         % Normalize noise power to take account of sampling rate, which
         % is a function of the IFFT size used in OFDM modulation, and

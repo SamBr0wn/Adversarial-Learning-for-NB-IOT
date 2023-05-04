@@ -11,6 +11,7 @@ Parameters = load("Parameters.mat");
 
 numTrials = 10;
 x = 1:numTrials;
+run_with_jammer = 0; % 1 for running with the jammer
 
 BLER_results = zeros(1,numTrials);
 Throughput_results = zeros(1,numTrials);
@@ -38,7 +39,10 @@ end
 
 
 for i= 1:numTrials
-    [Throughput_result,BLER_result] = simulate(SNRdB,Obs_j);
+    if ~run_with_jammer
+        Obs_j(1) = 0;
+    end
+    [Throughput_result,BLER_result] = simulate(SNRdB,Obs_j(1));
     BLER_results(i) = BLER_result;
     Throughput_results(i) = Throughput_result;
 
@@ -65,4 +69,8 @@ for i= 1:numTrials
     end   
 end
 
+
+if ~run_with_jammer
+    plot(x,Throughput_results);
+end
 % plot(x,BLER_results,x,)
