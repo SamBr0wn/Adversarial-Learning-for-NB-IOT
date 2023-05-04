@@ -16,7 +16,9 @@ badSNRdB = -15;
 
 mem_length = 10;
 
-channel_evolve_prob = 0.3;
+
+channel_evolve_prob = 0.5;
+
 
 enb.NFrame = 0;     % Simulation starting frame number
 enb.NSubframe = 0;  % Simulation starting subframe number
