@@ -158,8 +158,8 @@ if doSim
 
     good_or_bad_channel = zeros(1, numTrials);
     for i = 1:numTrials
-        if cs_matrix(victim_cs_vals(i), i) == 1
-            good_or_bad_channel(i) == 1;
+        if cs_matrix(max(victim_cs_vals(i), 1), i) == 1
+            good_or_bad_channel(i) = 1;
         end
     end
 
@@ -168,11 +168,11 @@ if doSim
     
     figure;
     yyaxis left;
-    plot(Throughput_results, 'b-o', 'MarkerSize', 10, 'LineWidth', 2);
+    plot((1:numel(Throughput_results)), Throughput_results, 'b-o', 'MarkerSize', 10, 'LineWidth', 2);
     ylabel("Throughput (% Maximum)");
     hold on;
     scatter(find(victim_cs_vals == jammer_cs_vals), ...
-        Throughput_results(find(victim_cs_vals == jammer_cs_vals)), 250, 'rx', 'LineWidth', 2);
+        Throughput_results(min(find(victim_cs_vals == jammer_cs_vals), end)), 250, 'rx', 'LineWidth', 2);
     yyaxis right;
     plot(SNR_vals, '--', 'LineWidth', 2);
     grid();
