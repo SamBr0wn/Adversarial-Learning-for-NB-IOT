@@ -26,13 +26,13 @@
 % Lets say that we have 12 channels and that 2 of them will be good and the
 % rest will be bad. 
 % Return int 1-12 to represent the good channel
-function current_state = evolveChannel(last_state)
-    p = 0.5; % probability that the channel will change
+function current_state = evolveChannel(last_state, prob)
+    % prob is probability that the channel will change
     nChannels = 12;
     event = randi(100)/100;
     current_state = zeros(2, 1);
 
-    if (event <= p)
+    if (event <= prob)
 %         if (last_state(2) == nChannels )
 %             current_state(1) = 1;
 %             current_state(2) = 2;

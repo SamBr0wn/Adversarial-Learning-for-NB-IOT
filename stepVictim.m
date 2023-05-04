@@ -6,7 +6,7 @@ function [NextObs,Reward,IsDone,LoggedSignals] = stepVictim(Action, LoggedSignal
 
 Parameters = load("Parameters.mat");
 
-new_channel_state = evolveChannel(LoggedSignals.channel_state);
+new_channel_state = evolveChannel(LoggedSignals.channel_state, Parameters.channel_evolve_prob);
 LoggedSignals.channel_state = new_channel_state;
 
 % if Action == 1

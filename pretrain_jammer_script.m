@@ -4,8 +4,8 @@ clear;
 run('variables.m'); % this line should get moved to the main function
 Parameters = load("Parameters.mat");
 
-% obsInfo_v = rlNumericSpec([mem_length, 1], "DataType", "double");
-obsInfo_j = rlFiniteSetSpec([0 1]);
+obsInfo_j = rlNumericSpec([1, 2], "DataType", "double");
+% obsInfo_j = rlFiniteSetSpec([0 1]);
 obsInfo_j.Name = "Jammer Channel Select";
 obsInfo_j.Description = 'TX Channel Selected, BLER, Throughput';
 
@@ -27,7 +27,7 @@ opt = rlTrainingOptions(...
     MaxEpisodes=100,...
     MaxStepsPerEpisode=100,...
     StopTrainingCriteria="AverageReward",...
-    StopTrainingValue=50);
+    StopTrainingValue=40);
 trainResults = train(PPO_jammer_agent,env,opt);
 
 trainResults = train(PPO_jammer_agent, env, trainResults);

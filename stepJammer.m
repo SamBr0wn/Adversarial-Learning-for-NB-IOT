@@ -6,7 +6,7 @@ function [NextObs,Reward,IsDone,LoggedSignals] = stepJammer(Action, LoggedSignal
 
 Parameters = load("Parameters.mat");
 
-new_channel_state = evolveChannel(LoggedSignals.channel_state);
+new_channel_state = evolveChannel(LoggedSignals.channel_state, Parameters.channel_evolve_prob);
 LoggedSignals.channel_state = new_channel_state;
 
 if ~isfield(LoggedSignals, "PPO_victim_agent")
@@ -49,24 +49,31 @@ v_selected_gc = 0;
 if any(new_channel_state == LoggedSignals.cs_v)
     v_selected_gc = 1;
 end
-LoggedSignals.jammer_obs = j_selected_v;
+LoggedSignals.jammer_obs(1) = j_selected_v;
+
+selected_good_channel = 0;
+if any(new_channel_state == LoggedSignals.cs_j)
+    selected_good_channel = 1;
+end
+LoggedSignals.jammer_obs(2) = selected_good_channel;
 
 LoggedSignals.victim_obs = v_selected_gc;
 
 Reward = -1;
 if (j_selected_v)
     Reward = 1;
-elseif (abs(LoggedSignals.cs_j - LoggedSignals.cs_v) < 2 )
-    Reward = -0.5;
 end
+% elseif (abs(LoggedSignals.cs_j - LoggedSignals.cs_v) < 2 )
+%     Reward = -0.5;
+% end
     
-NextObs = j_selected_v;
+NextObs = LoggedSignals.jammer_obs;
 
 IsDone = false;
 
 fprintf("Step: %d; Channel: %s; JCS: %d; VCS: %d Last Action: %d; Cur Obs: %s; Reward: %f\n", ...
    LoggedSignals.stepNum, arrToStr(new_channel_state), LoggedSignals.cs_j, LoggedSignals.cs_v, Action, ...
-   arrToStr(j_selected_v), Reward);
+   arrToStr(NextObs), Reward);
 
 LoggedSignals.stepNum = LoggedSignals.stepNum + 1;
 

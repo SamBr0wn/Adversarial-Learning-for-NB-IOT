@@ -18,9 +18,12 @@ LoggedSignals.cs_v = victim_cs;
 LoggedSignals.channel_state = channel_state;
 
 % InitialObservation = zeros(Parameters.mem_length, 1);
-InitialObservation_j = 0;
+InitialObservation_j = [0 0];
 if jammer_cs == victim_cs
-    InitialObservation_j = 1;
+    InitialObservation_j(1) = 1;
+end
+if any(channel_state == jammer_cs)
+    InitialObservation_j(2) = 1;
 end
 InitialObservation_v = 0;
 if any(channel_state == victim_cs)
