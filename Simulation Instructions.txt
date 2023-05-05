@@ -1,6 +1,4 @@
-# Adversarial-Learning-for-NB-IOT
-
-## Simulation Instructions:
+Simulation Instructions:
 
 *Requires Reinforcement Learning and LTE Toolboxes
 
