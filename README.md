@@ -1,5 +1,7 @@
 # Adversarial-Learning-for-NB-IOT
 
+The behavior of an NB-IoT communications link using DRL-based dynamic channel selection is explored in the presence of a DRL-based jamming attacker. A reinforcement learning framework is developed using PPO agents, and their behavior is examined under different channel selection conditions. A Markov Decision Process (MDP) is used to model the channel evolution, and a pre-trained victim agent is deployed alongside a pre-trained jammer. Performance results are compared with and without a victim agent defense strategy. Overall, the defensive strategy employed was able to evade the jammer, but not effective enough to be a viable defensive strategy.
+
 ## Simulation Instructions:
 
 *Requires Reinforcement Learning and LTE Toolboxes
